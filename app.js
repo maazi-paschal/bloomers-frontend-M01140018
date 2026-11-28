@@ -7,6 +7,7 @@ createApp({
       apiBaseUrl: "http://localhost:3000",
       lessons: [],
       searchQuery: "",
+      selectedHub: "all",
       sortBy: "topic",
       sortOrder: "asc",
       searchTimer: null,
@@ -17,7 +18,18 @@ createApp({
 
   computed: {
     sortedLessons() {
-      const list = [...this.lessons];
+      // Step 1: Filter by selected hub while keeping all lessons when "all" is chosen
+      const hubFiltered =
+        this.selectedHub === "all"
+          ? this.lessons
+          : this.lessons.filter((lesson) =>
+              String(lesson.location || "")
+                .toLowerCase()
+                .includes(this.selectedHub.toLowerCase()),
+            );
+
+      // Step 2: Sort the filtered lessons based on the selected field and order
+      const list = [...hubFiltered];
       const field = this.sortBy;
       const direction = this.sortOrder === "asc" ? 1 : -1;
 
@@ -100,7 +112,7 @@ createApp({
 
     // method to clear the search query and reset the lesson list
     clearSearch() {
-      this.searchQuery = ""; //clearing input text 
+      this.searchQuery = ""; //clearing input text
       clearTimeout(this.searchTimer);
       this.fetchLessons();
     },
