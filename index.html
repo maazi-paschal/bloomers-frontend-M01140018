@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bloomers: After-School Activities for Ages 8-15</title>
 
-    <!-- styles -->
+    <!-- styles: Bootstrap, Font Awesome icon styles and custom styles -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.9/css/bootstrap.min.css"
@@ -16,8 +16,10 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body>
     <div id="app">
+        <!-- navigation bar with brand and description -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
           <a class="navbar-brand fw-bold" href="#"
@@ -30,8 +32,58 @@
       </nav>
 
       <main class="container pb-5">
-        <div v-if="loading" class="alert alert-info">Loading lessons...</div>
 
+        <!-- Sorting and Searching lessons by topic, hub, teacher, price or spaces left. -->
+        <div class="row g-2 mb-4 align-items-center">
+          <div class="col-md-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search lessons by topic, hub, teacher, price or spaces..."
+                v-model="searchQuery"
+                @input="handleSearchInput"
+              />
+              <button
+                v-if="searchQuery"
+                class="btn btn-outline-secondary"
+                type="button"
+                @click="clearSearch"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Option to sort lessons by topic, location, price or spaces left in ascending or descending order. -->
+          <div class="col-md-4">
+            <select class="form-select" v-model="sortBy">
+              <option value="topic">Sort by: Topic</option>
+              <option value="location">Sort by: Location</option>
+              <option value="price">Sort by: Price</option>
+              <option value="space">Sort by: Spaces Left</option>
+            </select>
+          </div>
+
+          <!-- setting the sort order to ascending or descending based on user selection. -->
+          <div class="col-md-2">
+            <button
+              class="btn btn-outline-dark w-100"
+              type="button"
+              @click="toggleSortOrder"
+            >
+              <i
+                class="fa-solid me-1"
+                :class="sortOrder === 'asc' ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short'"
+              ></i>
+              {{ sortOrder === 'asc' ? 'Asc' : 'Desc' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- loading state handler -->
+        <div v-if="loading" class="alert alert-info">Loading lessons...</div>
+        <!-- error handling -->
         <div v-else-if="errorMessage" class="alert alert-danger">
           {{ errorMessage }}
         </div>
@@ -40,7 +92,7 @@
 
           <div
             class="col-md-6 col-lg-4"
-            v-for="lesson in lessons"
+            v-for="lesson in sortedLessons"
             :key="lesson.id"
           >
             <div class="card h-100 shadow-sm">
