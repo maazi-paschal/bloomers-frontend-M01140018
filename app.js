@@ -6,6 +6,7 @@ createApp({
     return {
       apiBaseUrl: "http://localhost:3000",
       lessons: [],
+      cart: [],
       searchQuery: "",
       selectedHub: "all",
       selectedTeacher: "all",
@@ -18,6 +19,11 @@ createApp({
   },
 
   computed: {
+    // cart
+    totalCartSpaces() {
+      return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+    },
+
     // computed property to get a list of unique teacher names from the lessons array
     availableTeachers() {
       const names = this.lessons
@@ -101,6 +107,37 @@ createApp({
         this.loading = false;
       }
     },
+
+    // method for adding lessons to cart
+    addToCart(lesson) {
+      // Guard against adding when no spaces remain
+      if (lesson.space <= 0) {
+        return;
+      }
+
+      // Decrement available spaces immediately so UI reflects the booking slot
+      lesson.space -= 1;
+
+      const lessonKey = lesson._id || lesson.id;
+      const existingItem = this.cart.find(
+        (item) => (item._id || item.id) === lessonKey,
+      );
+
+      if (existingItem) {
+        existingItem.quantity += 1; //if the items is already in the cart just increment instead of adding a new one
+      } else {
+        this.cart.push({
+          id: lesson.id,
+          _id: lesson._id,
+          topic: lesson.topic,
+          location: lesson.location,
+          price: lesson.price,
+          image: lesson.image,
+          quantity: 1,
+        });
+      }
+    },
+
     // method that runs whenever the user types in the search input field. It clears any existing timer and sets a new one to call the searchLessons method after 250 milliseconds of inactivity.
     handleSearchInput() {
       clearTimeout(this.searchTimer);

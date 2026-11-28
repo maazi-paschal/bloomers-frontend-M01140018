@@ -19,7 +19,7 @@
 
   <body>
     <div id="app">
-      <!-- navigation bar with brand and description -->
+      <!-- navigation bar with brand, descriptionand cart navigation -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
           <a class="navbar-brand fw-bold" href="#"
@@ -28,6 +28,14 @@
           <span class="navbar-text text-light small"
             >After-school activities for emerging minds (Ages 8-15)</span
           >
+
+          <!-- cart navigation -->
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-light text-dark">
+              <i class="fa-solid fa-cart-shopping me-1"></i>
+              Cart: {{ totalCartSpaces }}
+            </span>
+          </div>
         </div>
       </nav>
 
@@ -145,6 +153,16 @@
                     >{{lesson.space}} spaces left
                   </span>
                 </div>
+
+                <button
+                  class="btn btn-primary btn-sm w-100"
+                  type="button"
+                  :disabled="lesson.space <= 0"
+                  @click="addToCart(lesson)"
+                >
+                <i class="fa-solid fa-plus me-1"></i>
+                  {{lesson.space > 0 ? 'Add to Cart' : 'Sold Out'}}
+                </button>
               </div>
             </div>
           </div>
