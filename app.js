@@ -8,6 +8,7 @@ createApp({
       lessons: [],
       searchQuery: "",
       selectedHub: "all",
+      selectedTeacher: "all",
       sortBy: "topic",
       sortOrder: "asc",
       searchTimer: null,
@@ -17,6 +18,20 @@ createApp({
   },
 
   computed: {
+    // computed property to get a list of unique teacher names from the lessons array
+    availableTeachers() {
+      const names = this.lessons
+        .map((lesson) =>
+          `${lesson.teacherFirstName || ""} ${lesson.teacherLastName || ""}`.trim(),
+        )
+        .filter((name) => name.length > 0);
+
+      // Deduplicate with Set and sort teacher names alphabetically
+      return [...new Set(names)].sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" }),
+      );
+    },
+
     sortedLessons() {
       // Step 1: Filter by selected hub while keeping all lessons when "all" is chosen
       const hubFiltered =
@@ -28,8 +43,18 @@ createApp({
                 .includes(this.selectedHub.toLowerCase()),
             );
 
-      // Step 2: Sort the filtered lessons based on the selected field and order
-      const list = [...hubFiltered];
+      // Step 2: Filter by selected teacher (or keep all if "all" is chosen)
+      const teacherFiltered =
+        this.selectedTeacher === "all"
+          ? hubFiltered
+          : hubFiltered.filter((lesson) => {
+              const fullName =
+                `${lesson.teacherFirstName || ""} ${lesson.teacherLastName || ""}`.trim();
+              return fullName === this.selectedTeacher;
+            });
+
+      // Step 3: Copy before sorting so underlying arrays are not mutated in place
+      const list = [...teacherFiltered];
       const field = this.sortBy;
       const direction = this.sortOrder === "asc" ? 1 : -1;
 

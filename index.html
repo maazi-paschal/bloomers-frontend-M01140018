@@ -34,7 +34,7 @@
       <main class="container pb-5">
         <!-- Sorting and Searching lessons by topic, hub, teacher, price or spaces left. -->
         <div class="row g-2 mb-4 align-items-center">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="input-group">
               <input
                 type="text"
@@ -55,7 +55,7 @@
           </div>
 
           <!-- Option to filter lessons by hub (location) with a dropdown menu. -->
-          <div class="col-md-3">
+          <div class="col-md-2">
             <select class="form-select" v-model="selectedHub">
               <option value="all">All Hubs (Mauritius)</option>
               <option value="Quatre Bornes">Quatre Bornes</option>
@@ -64,8 +64,22 @@
             </select>
           </div>
 
-          <!-- Option to sort lessons by topic, location, price or spaces left in ascending or descending order. -->
+          <!-- Option to filter lessons by teacher with a dropdown menu. -->
           <div class="col-md-3">
+            <select class="form-select" v-model="selectedTeacher">
+              <option value="all">All Teachers</option>
+              <option
+                v-for="teacher in availableTeachers"
+                :key="teacher"
+                :value="teacher"
+              >
+                {{ teacher }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Option to sort lessons by topic, location, price or spaces left in ascending or descending order. -->
+          <div class="col-md-2">
             <select class="form-select" v-model="sortBy">
               <option value="topic">Sort by: Topic</option>
               <option value="location">Sort by: Location</option>
